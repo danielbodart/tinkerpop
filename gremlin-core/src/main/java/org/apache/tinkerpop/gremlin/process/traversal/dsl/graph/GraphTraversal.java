@@ -1432,9 +1432,7 @@ public interface GraphTraversal<S, E> extends Traversal<S, E> {
     }
 
     /**
-     * Adds a {@link Vertex} with one or more labels.
-     * When called with multiple labels, creates a multi-labeled vertex using the set-based
-     * constructor.
+     * Adds a {@link Vertex}.
      *
      * @param label the first (or only) label of the {@link Vertex} to add
      * @param additionalLabels  additional labels (may be empty for single-label)
@@ -1461,9 +1459,6 @@ public interface GraphTraversal<S, E> extends Traversal<S, E> {
 
     /**
      * Adds a {@link Vertex} with one or more labels each determined by a {@link Traversal}.
-     *
-     * Each traversal is iterated for a single result only. If exactly one {@link Traversal} is provided,
-     * and it produces a {@link Collection<String>}, the collection will be automatically unfolded.
      *
      * @param first the first (or only) label traversal
      * @param more  additional label traversals (may be empty for single-traversal behavior)
@@ -1495,7 +1490,7 @@ public interface GraphTraversal<S, E> extends Traversal<S, E> {
      *
      * @return the traversal with the {@link AddVertexStepContract} added
      * @see <a href="http://tinkerpop.apache.org/docs/${project.version}/reference/#addvertex-step" target="_blank">Reference Documentation - AddVertex Step</a>
-     * @since 3.1.0-incubating
+     * @since 3.8.0
      */
     public default GraphTraversal<S, Vertex> addV() {
         this.asAdmin().getGremlinLang().addStep(Symbols.addV);
@@ -1503,7 +1498,7 @@ public interface GraphTraversal<S, E> extends Traversal<S, E> {
     }
 
     /**
-     * Adds a {@link Vertex} with one or more labels where labels may be {@link GValue} variables.
+     * Adds a {@link Vertex}.
      *
      * @param label the label (or only) label
      * @param additionalLabels  additional labels. May be empty for single-label)
@@ -3525,8 +3520,7 @@ public interface GraphTraversal<S, E> extends Traversal<S, E> {
     }
 
     /**
-     * Adds one or more labels to the current element. This is a side-effect step that passes the
-     * element through unchanged.
+     * Adds labels to the current element. This is a side-effect step that passes the element through unchanged.
      *
      * @param label      the first label to add
      * @param moreLabels additional labels to add
@@ -3539,10 +3533,7 @@ public interface GraphTraversal<S, E> extends Traversal<S, E> {
     }
 
     /**
-     * Adds one or more dynamically computed labels to the current element. This is a side-effect step that
-     * passes the element through unchanged. Each traversal is iterated for a single result only. If exactly
-     * one {@link Traversal} is provided, and it produces a {@link java.util.Collection}, the collection will
-     * be automatically unfolded.
+     * Adds labels to the current element. This is a side-effect step that passes the element through unchanged.
      *
      * @param labelTraversal      the first (or only) label traversal
      * @param moreLabelTraversals additional label traversals (may be empty for single-traversal behavior)
@@ -3576,8 +3567,7 @@ public interface GraphTraversal<S, E> extends Traversal<S, E> {
     }
 
     /**
-     * Removes specific labels from the current element. This is a side-effect step that passes the
-     * element through unchanged.
+     * Removes labels from the current element. This is a side-effect step that passes the element through unchanged.
      *
      * @param label      the first label to remove
      * @param moreLabels additional labels to remove
@@ -3590,10 +3580,7 @@ public interface GraphTraversal<S, E> extends Traversal<S, E> {
     }
 
     /**
-     * Removes one or more dynamically computed labels from the current element. This is a side-effect step
-     * that passes the element through unchanged. Each traversal is iterated for a single result only. If
-     * exactly one {@link Traversal} is provided, and it produces a {@link java.util.Collection}, the collection
-     * will be automatically unfolded.
+     * Removes labels from the current element. This is a side-effect step that passes the element through unchanged.
      *
      * @param labelTraversal      the first (or only) label traversal
      * @param moreLabelTraversals additional label traversals (may be empty for single-traversal behavior)
