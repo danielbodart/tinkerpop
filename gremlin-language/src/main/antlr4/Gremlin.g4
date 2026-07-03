@@ -637,7 +637,7 @@ traversalMethod_labels
     ;
 
 traversalMethod_addLabel
-    : K_ADDLABEL LPAREN stringArgumentVarargs RPAREN #traversalMethod_addLabel_String
+    : K_ADDLABEL LPAREN stringLiteralVarargs RPAREN #traversalMethod_addLabel_String
     | K_ADDLABEL LPAREN nestedTraversal (COMMA nestedTraversal)* RPAREN #traversalMethod_addLabel_Traversal
     ;
 
@@ -646,7 +646,7 @@ traversalMethod_dropLabels
     ;
 
 traversalMethod_dropLabel
-    : K_DROPLABEL LPAREN stringArgumentVarargs RPAREN #traversalMethod_dropLabel_String
+    : K_DROPLABEL LPAREN stringLiteralVarargs RPAREN #traversalMethod_dropLabel_String
     | K_DROPLABEL LPAREN nestedTraversal (COMMA nestedTraversal)* RPAREN #traversalMethod_dropLabel_Traversal
     ;
 
@@ -1645,6 +1645,10 @@ genericSetLiteral
 
 stringNullableLiteralVarargs
     : (stringNullableLiteral (COMMA stringNullableLiteral)*)?
+    ;
+
+stringLiteralVarargs
+    : stringLiteral (COMMA stringLiteral)*
     ;
 
 genericLiteral
