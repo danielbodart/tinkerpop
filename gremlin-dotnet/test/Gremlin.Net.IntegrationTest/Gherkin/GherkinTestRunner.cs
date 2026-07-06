@@ -113,6 +113,12 @@ namespace Gremlin.Net.IntegrationTest.Gherkin
                         continue;
                     }
 
+                    if (scenario.Tags.Any(t => t.Name == "@MultiLabelDefault"))
+                    {
+                        failedSteps.Add(scenario.Steps.First(), new IgnoreException(IgnoreReason.MultiLabelDefaultNotSupportedOnTestGraph));
+                        continue;
+                    }
+
                     if (scenario.Tags.Concat(feature.Tags).Any(t => t.Name == "@StepTree"))
                     {
                         failedSteps.Add(scenario.Steps.First(), new IgnoreException(IgnoreReason.TreeStepNotSupported));
