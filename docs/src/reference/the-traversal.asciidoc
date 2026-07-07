@@ -644,7 +644,7 @@ link:++https://tinkerpop.apache.org/javadocs/x.y.z/core/org/apache/tinkerpop/gre
 === AddLabel Step
 
 The `addLabel()`-step (*sideEffect*) adds one or more labels to an element. The graph must be configured with a
-`LabelCardinality` that supports mutation (e.g. `ZERO_OR_MORE` or `ONE_OR_MORE`).
+`LabelCardinality` that permits changing the set of labels on an element (e.g. `ZERO_OR_MORE` or `ONE_OR_MORE`).
 
 [gremlin-groovy]
 ----
@@ -1795,7 +1795,8 @@ g.V()
 === DropLabel Step
 
 The `dropLabel()`-step (*sideEffect*) removes one or more specific labels from an element. The `dropLabels()`-step
-removes all labels. The graph must be configured with a `LabelCardinality` that supports mutation.
+removes all labels. The graph must be configured with a `LabelCardinality` that permits changing the set of labels
+on an element (e.g. `ZERO_OR_MORE` or `ONE_OR_MORE`).
 
 [gremlin-groovy]
 ----
@@ -2237,7 +2238,6 @@ It is possible to filter vertices, edges, and vertex properties based on their p
 [gremlin-groovy,modern]
 ----
 g.V().hasLabel('person')
-g.V().hasLabel('person','name','marko')
 g.V().hasLabel('person').out().has('name',within('vadas','josh'))
 g.V().hasLabel('person').out().has('name',within('vadas','josh')).
       outE().hasLabel('created')
@@ -2250,7 +2250,9 @@ g.V().properties().hasKey('age').value() <6>
 g.V().hasNot('age').values('name') <7>
 g.V().has('person','name', startingWith('m')) <8>
 g.V().has(null, 'vadas') <9>
+g.V().has('person','name','marko')
 g.V().has('person', 'name', regex('r')).values('name') <10>
+g.V().hasLabel('person', 'software').count() <11>
 ----
 
 <1> Find all vertices whose ages are between 20 (exclusive) and 30 (exclusive). In other words, the age must be greater than 20 and less than 30.
@@ -2264,6 +2266,8 @@ the key,value pairs for those vertices.
 <8> Find all "person" vertices that have a name property that starts with the letter "m".
 <9> Property key is always stored as `String` and therefore an equality check with `null` will produce no result.
 <10> An example of using `has()` with regular expression predicate.
+<11> Find all vertices containing the label "person" or "software". To require all specified labels be present on a multi-label
+vertex, chain calls instead: `hasLabel('a').hasLabel('b')`.
 
 *Additional References*
 
