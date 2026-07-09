@@ -207,6 +207,10 @@ public class GryoRegistrator implements KryoRegistrator {
             throw new IllegalStateException(e.getMessage(), e);
         }
         m.put(ArraySeq.ofRef.class, null);
+        // defensive registration: scala.collection.mutable.ArraySeq.ofRef is what the deprecated
+        // scala.collection.mutable.WrappedArray alias resolves to under Scala 2.13 -- register it in case a
+        // mismatched Spark/Scala build on the classpath at runtime produces it instead of the immutable variant
+        m.put(scala.collection.mutable.ArraySeq.ofRef.class, null);
         m.put(MessagePayload.class, null);
         m.put(ViewIncomingPayload.class, null);
         m.put(ViewOutgoingPayload.class, null);

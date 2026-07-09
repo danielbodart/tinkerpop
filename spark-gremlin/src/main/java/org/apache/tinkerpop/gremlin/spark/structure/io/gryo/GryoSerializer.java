@@ -147,7 +147,11 @@ public final class GryoSerializer extends Serializer implements Serializable {
                 super.register(GryoIo.class, Class.forName("scala.None$"), new JavaSerializer());
                 super.register(GryoIo.class, Class.forName("scala.Some$"), new JavaSerializer());
                 super.register(GryoIo.class, Class.forName("scala.Some"), new JavaSerializer());
-                super.register(GryoIo.class, ArraySeq.ofRef.class, new WrappedArraySerializer());
+                super.register(GryoIo.class, ArraySeq.ofRef.class, WrappedArraySerializer.IMMUTABLE);
+                // defensive registration: scala.collection.mutable.ArraySeq.ofRef is what the deprecated
+                // scala.collection.mutable.WrappedArray alias resolves to under Scala 2.13 -- register it in case a
+                // mismatched Spark/Scala build on the classpath at runtime produces it instead of the immutable variant
+                super.register(GryoIo.class, scala.collection.mutable.ArraySeq.ofRef.class, WrappedArraySerializer.MUTABLE);
                 super.register(GryoIo.class, MessagePayload.class, null);
                 super.register(GryoIo.class, ViewIncomingPayload.class, null);
                 super.register(GryoIo.class, ViewOutgoingPayload.class, null);
