@@ -46,7 +46,7 @@ const parsers = [
   [ 'prop\\[(.+)\\]', toProperty ],
   [ 'dt\\[(.+)\\]', toDateTime ],
   [ 'uuid\\[(.+)\\]', toUuid ],
-  [ 'd\\[(.*)\\]\\.[bsilfdmn]', toNumeric ],
+  [ 'd\\[(.*)\\]\\.([bsilfdmn])', toNumeric ],
   [ 'bin\\[(.*)\\]', toBinary ],
   [ 'v\\[(.+)\\]', toVertex ],
   [ 'v\\[(.+)\\]\\.id', toVertexId ],
@@ -468,6 +468,7 @@ function parseValue(stringValue) {
     return Number.NEGATIVE_INFINITY;
 
   let extractedValue = null;
+  let extractedGroups = null;
   let parser = null;
   for (let item of parsers) {
     let re = item[0];
@@ -475,19 +476,42 @@ function parseValue(stringValue) {
     if (match && match.length > 1) {
       parser = item[1];
       extractedValue = match[1];
+      extractedGroups = match.slice(2);
       break;
     }
   }
 
-  return parser !== null ? parser.call(this, extractedValue) : stringValue;
+  return parser !== null ? parser.call(this, extractedValue, ...extractedGroups) : stringValue;
 }
 
-function toNumeric(stringValue) {
-  try {
-    return parseFloat(stringValue);
-  } catch (Error) {
-    return BigInt(stringValue);
-  }
+// Numeric parsers keyed by the d[...].<suffix> type tag, mirroring the reference
+// implementation in gremlin-dotnet (CommonSteps.NumericParsers), but expressed in the types
+// this GLV actually deserializes to:
+//   - byte/short/int/float/double/decimal -> Number.
+//   - long ('l') -> Number inside the safe-integer range, BigInt outside it, matching
+//     LongSerializer.deserializeValue, which downcasts a safe-range Int64 to a Number.
+//   - bigint ('n') -> always BigInt, matching BigIntegerSerializer. A BigInteger stays a
+//     BigInteger even when small: BigInt.feature asserts d[456].n for a value that fits an
+//     int, i.e. the declared type is preserved rather than narrowed to the smallest that fits.
+const toSafeIntegerOrBigInt = (s) => {
+  const v = BigInt(s);
+  return v >= BigInt(Number.MIN_SAFE_INTEGER) && v <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(v) : v;
+};
+
+const numericParsers = {
+  b: (s) => parseInt(s, 10),
+  s: (s) => parseInt(s, 10),
+  i: (s) => parseInt(s, 10),
+  l: toSafeIntegerOrBigInt,
+  f: (s) => parseFloat(s),
+  d: (s) => parseFloat(s),
+  m: (s) => parseFloat(s),
+  n: (s) => BigInt(s),
+};
+
+function toNumeric(stringValue, type) {
+  const parser = numericParsers[type];
+  return parser !== undefined ? parser(stringValue) : parseFloat(stringValue);
 }
 
 function toVertex(name) {
